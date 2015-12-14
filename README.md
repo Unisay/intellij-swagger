@@ -1,2 +1,2 @@
-# idea-plugin-swagger
-Intellij Idea plugin that provides support for swagger.io
+# Intellij Swagger Plugin
+Intellij Idea plugin that provides support for http://swagger.io
