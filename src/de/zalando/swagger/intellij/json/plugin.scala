@@ -4,7 +4,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.{FileTypeConsumer, FileTypeFactory, LanguageFileType}
 import com.intellij.openapi.util.IconLoader
 
-object SwaggerJsonLanguage extends Language("SwaggerJson")
+object SwaggerJsonLanguage extends Language("Swagger/JSON")
 
 object SwaggerJsonFileType extends LanguageFileType(SwaggerJsonLanguage) {
   override val getName = "Swagger JSON file"
