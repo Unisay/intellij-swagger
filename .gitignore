@@ -1,8 +1,10 @@
 /RUNNING_PID
-/logs/
-/target/
-/.idea/
-/.idea_modules/
+/logs
+/target
+/.idea
+/.idea_modules
+/gen
+/out
 
 *.iml
 *.class
