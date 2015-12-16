@@ -1,0 +1,15 @@
+{
+  tokens=[
+    space='regexp:\s+'
+    colon=':'
+    dash='-'
+    id="regexp:\w+"
+    number="regexp:\d+"
+    string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+    newline="regexp:(\n|\r|\r\n)"
+  ]
+}
+
+external grammar ::= !<<eof>> kv *
+kv ::= id colon literal newline
+literal ::= number | string
