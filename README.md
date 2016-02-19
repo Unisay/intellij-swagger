@@ -1,4 +1,4 @@
-# Intellij Swagger Plugin
+# Intellij Swagger Plugin (defunct)
 Intellij Idea plugin that provides support for http://swagger.io
 
 ## Current state
