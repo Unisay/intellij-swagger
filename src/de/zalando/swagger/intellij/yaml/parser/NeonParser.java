@@ -40,10 +40,10 @@ public class NeonParser implements PsiParser, NeonTokenTypes, NeonElementTypes {
     PsiBuilder.Marker fileMarker = mark();
 
     passEmpty(); // process beginning of file
-    if (!this.myBuilder.eof())
+    if (!myBuilder.eof())
       parseValue(0);
 
-    while (!this.myBuilder.eof()) {
+    while (!myBuilder.eof()) {
       if (myBuilder.getTokenType() != NEON_INDENT) {
         myBuilder.error("unexpected token at end of file");
       }
@@ -59,22 +59,21 @@ public class NeonParser implements PsiParser, NeonTokenTypes, NeonElementTypes {
     IElementType currentToken = myBuilder.getTokenType();
     IElementType nextToken = myBuilder.lookAhead(1);
 
-    if (NeonTokenTypes.STRING_LITERALS.contains(currentToken) && nextToken == NEON_COLON || currentToken == NeonTokenTypes.NEON_ARRAY_BULLET) {
+    if (STRING_LITERALS.contains(currentToken) && nextToken == NEON_COLON || currentToken == NEON_ARRAY_BULLET) {
       // key: val || - key
       PsiBuilder.Marker val = mark();
       parseArray(indent);
       val.done(ARRAY);
-    } else if (NeonTokenTypes.STRING_LITERALS.contains(currentToken) && nextToken == NEON_ASSIGNMENT) {
+    } else if (STRING_LITERALS.contains(currentToken) && nextToken == NEON_ASSIGNMENT) {
       PsiBuilder.Marker val = mark();
       myInline++;
       parseOpenArray(indent);
       myInline--;
       val.done(ARRAY);
-    } else if (NeonTokenTypes.STRING_LITERALS.contains(currentToken) || currentToken == NEON_LBRACE_JINJA) {
+    } else if (STRING_LITERALS.contains(currentToken) || currentToken == NEON_LBRACE_JINJA) {
       PsiBuilder.Marker val = mark();
       parseScalar(indent);
       val.done(SCALAR_VALUE);
-
     } else if (OPEN_BRACKET.contains(currentToken)) { // array
       PsiBuilder.Marker val = mark();
       myInline++;
@@ -94,7 +93,7 @@ public class NeonParser implements PsiParser, NeonTokenTypes, NeonElementTypes {
 
     } else if (currentToken == NEON_INDENT) {
       // no value -> null
-    } else if (currentToken == NEON_LINE_CONTINUATION) {
+    } else if (currentToken == SCALAR_FOLDED) {
       advanceLexer();
 
       // And skip next indent, if any
@@ -113,7 +112,7 @@ public class NeonParser implements PsiParser, NeonTokenTypes, NeonElementTypes {
     IElementType currentToken = myBuilder.getTokenType();
     IElementType nextToken = myBuilder.lookAhead(1);
 
-    if (NeonTokenTypes.STRING_LITERALS.contains(currentToken)) {
+    if (STRING_LITERALS.contains(currentToken)) {
       // Continue scalar
       advanceLexerOnAllowedTokens(OPEN_STRING_ALLOWED);
       parseScalar(indent);
@@ -135,7 +134,15 @@ public class NeonParser implements PsiParser, NeonTokenTypes, NeonElementTypes {
 
       parseScalar(indent);
 
-    } else if (currentToken == NEON_LINE_CONTINUATION) {
+    } else if (currentToken == SCALAR_FOLDED) {
+      advanceLexer();
+
+      // And skip next indent, if any
+      if (nextToken == NEON_INDENT)
+        advanceLexer();
+
+      parseScalar(indent);
+    } else if (currentToken == SCALAR_LITERAL) {
       advanceLexer();
 
       // And skip next indent, if any
@@ -200,7 +207,7 @@ public class NeonParser implements PsiParser, NeonTokenTypes, NeonElementTypes {
   }
 
   private void parseKeyVal(int indent) {
-    myAssert(NeonTokenTypes.STRING_LITERALS.contains(myBuilder.getTokenType()), "Expected literal or string");
+    myAssert(STRING_LITERALS.contains(myBuilder.getTokenType()), "Expected literal or string");
 
     PsiBuilder.Marker keyValPair = mark();
     parseKey();
@@ -228,7 +235,7 @@ public class NeonParser implements PsiParser, NeonTokenTypes, NeonElementTypes {
   }
 
   private void parseKey() {
-    myAssert(NeonTokenTypes.STRING_LITERALS.contains(myBuilder.getTokenType()), "Expected literal or string");
+    myAssert(STRING_LITERALS.contains(myBuilder.getTokenType()), "Expected literal or string");
 
     PsiBuilder.Marker key = mark();
     advanceLexer();
@@ -242,7 +249,7 @@ public class NeonParser implements PsiParser, NeonTokenTypes, NeonElementTypes {
    * Go to next token; if there is more whitespace, skip to the last
    */
   private void advanceLexer() {
-    if (this.myBuilder.eof()) return;
+    if (myBuilder.eof()) return;
 
     do {
       IElementType type = myBuilder.getTokenType();
@@ -322,7 +329,7 @@ public class NeonParser implements PsiParser, NeonTokenTypes, NeonElementTypes {
 
   private PsiBuilder.Marker mark() {
     dropEolMarker();
-    return this.myBuilder.mark();
+    return myBuilder.mark();
   }
 
   private void passEmpty() {

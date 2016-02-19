@@ -6,12 +6,12 @@ import static de.zalando.swagger.intellij.yaml.lexer.NeonTokenTypes.*;
 
 %%
 %class _NeonLexer
-%implements FlexLexer
+//%implements FlexLexer
 %public
-// %debug
+%debug
 %unicode
-%function advance
-%type IElementType
+//%function advance
+//%type IElementType
 %{
     private int yycolumn = 0;
     private int a = 0;
@@ -63,7 +63,8 @@ NEWLINE = \r\n|[\r\n\u2028\u2029\u000B\u000C\u0085]
     ":" / [ \t\n,\]})] { return NEON_COLON; }
     ":" $ { return NEON_COLON; }
     ","   { return NEON_ITEM_DELIMITER; }
-    ">" {WHITESPACE}* {NEWLINE} { return NEON_LINE_CONTINUATION; }
+    "|" {WHITESPACE}* {NEWLINE} { return SCALAR_LITERAL; }
+    ">" {WHITESPACE}* {NEWLINE} { return SCALAR_FOLDED; }
 
     "(" { return NEON_LPAREN; }
     ")" { return NEON_RPAREN; }

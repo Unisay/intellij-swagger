@@ -1,8 +1,11 @@
 package de.zalando.swagger.intellij.yaml.lexer;
 
 import com.google.common.collect.ImmutableMap;
+import com.intellij.embedding.EmbeddedLazyParseableElementType;
+import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.tree.TokenSet;
 
 import java.util.Map;
@@ -27,10 +30,12 @@ public interface NeonTokenTypes {
 
   // symbols
   IElementType NEON_COLON = new NeonTokenType(":");
+  IElementType NEON_PIPE = new NeonTokenType("|");
   IElementType NEON_ASSIGNMENT = new NeonTokenType("=");
   IElementType NEON_ARRAY_BULLET = new NeonTokenType("-");
   IElementType NEON_ITEM_DELIMITER = new NeonTokenType(",");
-  IElementType NEON_LINE_CONTINUATION = new NeonTokenType(">");
+  IElementType SCALAR_FOLDED = new NeonTokenType(">");
+  IElementType SCALAR_LITERAL = new NeonTokenType("|");
 
   // braces
   IElementType NEON_LPAREN = new NeonTokenType("(");
@@ -39,8 +44,6 @@ public interface NeonTokenTypes {
   IElementType NEON_RBRACE_CURLY = new NeonTokenType("}");
   IElementType NEON_LBRACE_JINJA = new NeonTokenType("{{");
   IElementType NEON_RBRACE_JINJA = new NeonTokenType("}}");
-  IElementType NEON_LBRACE_JINJA_CODE = new NeonTokenType("{%");
-  IElementType NEON_RBRACE_JINJA_CODE = new NeonTokenType("%}");
   IElementType NEON_LBRACE_SQUARE = new NeonTokenType("[");
   IElementType NEON_RBRACE_SQUARE = new NeonTokenType("]");
 
@@ -60,6 +63,8 @@ public interface NeonTokenTypes {
   // special tokens (identifier in block header or as array key)
   IElementType NEON_KEY = new NeonTokenType("key");
 
+//  ILazyParseableElementType SCALAR_BLOCK =
+//          new EmbeddedLazyParseableElementType("scalar_block", PlainTextLanguage.INSTANCE);
 
   // sets
   TokenSet WHITESPACES = TokenSet.create(NEON_WHITESPACE);
@@ -86,7 +91,7 @@ public interface NeonTokenTypes {
   );
 
   // brackets
-  public static final Map<IElementType, IElementType> closingBrackets = ImmutableMap.of(
+  Map<IElementType, IElementType> closingBrackets = ImmutableMap.of(
           NEON_LPAREN, NEON_RPAREN,
           NEON_LBRACE_CURLY, NEON_RBRACE_CURLY,
           NEON_LBRACE_SQUARE, NEON_RBRACE_SQUARE
